@@ -55,9 +55,8 @@ void parseInstruction(std::string instruction, uint32_t registers[]){
 
         char num = rd[1];
         int rdNum = num - '0';
-        uint32_t immediateNum = stoi(immediate);
 
-        executeInstruction(opcode, rdNum, "", "", immediateNum, registers, updateFlags);
+        executeInstruction(opcode, rdNum, 0, 0, immediate, registers, updateFlags);
     }
     else if(opcode == "LSLS" || opcode == "LSRS"){
         ss >> rd >> rn >> immediate;
@@ -65,26 +64,56 @@ void parseInstruction(std::string instruction, uint32_t registers[]){
             updateFlags = true;
         }
 
-       // executeInstruction(opcode, rd, rn, "", immediate, registers, updateFlags);
+        char num1 = rd[1];
+        int rdNum = num1 - '0';
+        char num2 = rn[1];
+        int rnNum = num2 - '0';
+
+        executeInstruction(opcode, rdNum, rnNum, 0, immediate, registers, updateFlags);
     }
     else if(opcode == "ADDS" || opcode == "SUBS" || opcode == "ANDS" || opcode == "ORR" || opcode == "XOR"){
         ss >> rd >> rn >> rm;
         if(opcode.back() == 'S'){
             updateFlags = true; 
         }
-       // executeInstruction(opcode, rd, rn, rm, "", registers, updateFlags);
+
+        char num1 = rd[1];
+        int rdNum = num1 - '0';
+        char num2 = rn[1];
+        int rnNum = num2 - '0';
+        char num3 = rm[1];
+        int rmNum = num3 - '0';
+
+        executeInstruction(opcode, rdNum, rnNum, rmNum, "", registers, updateFlags);
     }
     else{
         std::cout << "operation not supported!" << std::endl;
     }
 }
 
-void executeInstruction(std::string opcode, int rd, int rn, int rm, uint32_t immediate, uint32_t registers[], bool update){
+void executeInstruction(std::string opcode, int rd, int rn, int rm, std::string immediate, uint32_t registers[], bool update){
+    if(update){
+        if(opcode == "MOV"){
 
+        }
+        else if{
+
+        }
+        else if{
+
+        }
+        else{
+            std::cout << "not supported!" << std::endl;
+        }
+        updateFlags();
+    }
+    else{
+
+    }
 }
 
 void updateFlags(){
-    
+
 }
 
 void display(){

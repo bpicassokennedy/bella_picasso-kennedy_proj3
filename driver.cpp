@@ -23,9 +23,10 @@ int main(){
     static const int numRegisters = 8;
     uint32_t registers[numRegisters] = {0}; // initialize all registers to 0
 
-    Flags flags = {0, 0, 0, 0}; // initialize all registers to 0 
-    display(instructions, registers, numInstructions, flags); // numInstructions used as looping condition in following functions
+    Flags flags = {0, 0, 0, 0}; // initialize all flags to 0 
 
+    display(instructions, registers, numInstructions, flags); // display runs all other functions required for the program to successfully run
+    
     return 0; // code executed successfully! 
 }
 
@@ -51,7 +52,7 @@ void display(std::string instructions[], uint32_t registers[], int numInstructio
         parseInstruction(instructions[i], registers, instructions, flags);  
         std::cout << "R0: 0x" << std::hex << std::uppercase << registers[0] << " R1: 0x" << std::hex << std::uppercase << registers[1] << " R2: 0x" << std::hex << std::uppercase << registers[2] << " R3: 0x" << std::hex << std::uppercase << registers[3] << std::endl;
         std::cout << "R4: 0x" << std::hex << std::uppercase << registers[4] << " R5: 0x" << std::hex << std::uppercase << registers[5] << " R6: 0x" << std::hex << std::uppercase << registers[6] << " R7: 0x" << std::hex << std::uppercase << registers[7] << std::endl;
-        std::cout << "N: " << flags.N << " Z: " << flags.Z << " C: " << flags.C << " V: " << flags.V << std::endl << std::endl;
+        std::cout << "N: " << flags.N << " Z: " << flags.Z << " C: " << flags.C << " V: " << flags.V << std::endl << std::endl; 
     }
 }
 
@@ -68,14 +69,14 @@ void parseInstruction(std::string instruction, uint32_t registers[], std::string
     }
 
     if(opcode == "MOV"){
-        ss >> rd >> immediate; // moving immediate into rd 
-        char num = rd[1];
-        int rdNum = num - '0';
+        ss >> rd >> immediate; 
+        char num = rd[1]; // casting an array at index [1] to a char, then to an int to pass through executeInstruction...
+        int rdNum = num - '0'; // this will be used to determine what register we are reading values from and writing values to in the executeInstructions function call(s)
         executeInstruction(opcode, rdNum, 0, 0, immediate, registers, instructions, updateFlags, flags);
     }
     else if(opcode == "LSLS" || opcode == "LSRS"){
         ss >> rd >> rn >> immediate;
-        if(opcode.back() == 'S' || opcode.back() == 's'){
+        if(opcode.back() == 'S' || opcode.back() == 's'){ // checking whether or not the opcode instruction will update the flags or not.. either way this pointer isp assed through to executeInstruction 
             updateFlags = true;
         }
         char num1 = rd[1];
@@ -107,12 +108,12 @@ void executeInstruction(std::string opcode, int rd, int rn, int rm, std::string 
     bool carry = 0;
     bool overflow = 0;
     if(opcode == "MOV"){
-        uint32_t movValue = parseImmediate(immediateStr);
+        uint32_t movValue = parseImmediate(immediateStr); // casting a string to a 32-bit unsigned integer 
         registers[rd] = movValue; 
     }
     else if(opcode == "LSLS" || opcode == "LSRS"){
         if(opcode == "LSLS"){
-            std::string temp = immediateStr.substr(1);
+            std::string temp = immediateStr.substr(1); // won't result in an overflow but can cause a carry determined by how many numbers shift out 
             int immediateValue = stoi(temp);
             registers[rd] = registers[rn] << immediateValue;
             carry = (registers[rn] & (1 << (32 - immediateValue))) != 0;
@@ -124,7 +125,7 @@ void executeInstruction(std::string opcode, int rd, int rn, int rm, std::string 
             carry = (registers[rn] & (1 << (32 - immediateValue))) != 0;
         }
     }
-    else if(opcode == "ADDS" || opcode == "SUBS" || opcode == "ANDS" || opcode == "ORR" || opcode == "XOR"){
+    else if(opcode == "ADDS" || opcode == "SUBS" || opcode == "ANDS" || opcode == "ORR" || opcode == "XOR"){ // arithmetic operations affect all four flags..
         if(opcode == "ADDS"){
             registers[rd] = registers[rn] + registers[rm];
             carry = (registers[rn] > registers[rd]) || (registers[rm] > registers[rd]);
@@ -135,7 +136,7 @@ void executeInstruction(std::string opcode, int rd, int rn, int rm, std::string 
             carry = registers[rn] >= registers[rm];
             overflow = (((registers[rn] ^ registers[rm]) & (registers[rn] ^ registers[rm])) & 0x80000000) != 0;
         }
-        else if(opcode == "ANDS"){ // no carry or overflow w logical operations!
+        else if(opcode == "ANDS"){ // whereas logical oeprations only affect the negative and zero flags, carry and overflow remain unchanged
             registers[rd] = registers[rn] & registers[rm];
         }
         else if(opcode == "ORR"){
@@ -151,7 +152,7 @@ void executeInstruction(std::string opcode, int rd, int rn, int rm, std::string 
     else{
         std::cout << "operation not supported!" << std::endl;
     }
-    if(updateFlags){
+    if(updateFlags){ // actually updating the flags! these are passed by reference and will make their way all the way  back to the display function we originally called in our main! 
         flags.N = (registers[rd] & 0x80000000) != 0;
         flags.Z = (registers[rd] == 0); 
         if(opcode != "ANDS"){
@@ -164,14 +165,10 @@ void executeInstruction(std::string opcode, int rd, int rn, int rm, std::string 
 }
 
 uint32_t parseImmediate(std::string line){
-    std::string temp = line.substr(3);
+    std::string temp = line.substr(3); // ensuring we aren't casting #0x into the hex number 
     std::stringstream ss;
     uint32_t hexValue;
     ss << std::hex << temp;
     ss >> hexValue;
     return hexValue;
-}
-
-void updateFlags(std::string instructions[], bool update){
-    bool neg = 0;
 }

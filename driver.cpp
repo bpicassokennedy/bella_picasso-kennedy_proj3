@@ -91,16 +91,32 @@ void parseInstruction(std::string instruction, uint32_t registers[]){
     }
 }
 
-void executeInstruction(std::string opcode, int rd, int rn, int rm, std::string immediate, uint32_t registers[], bool update){
+void executeInstruction(std::string opcode, int rd, int rn, int rm, std::string immediateStr, uint32_t registers[], bool update){
+    uint32_t immediateValue; 
     if(update){
         if(opcode == "MOV"){
-
+            immediateValue = parseImmediate(immediateStr);
+            registers[rd] = immediateValue; 
         }
-        else if{
-
+        else if(opcode == "LSLS" || opcode == "LSRS"){
+            if(opcode == "LSLS"){
+                immediateValue = parseImmediate(immediateStr);
+                registers[rd] = registers[rn] << immediateValue;
+            }
         }
-        else if{
-
+        else if(opcode == "ADDS" || opcode == "SUBS" || opcode == "ANDS" || opcode == "ORR" || opcode == "XOR"){
+            if(opcode == "ADDS"){
+                registers[rd] = registers[rn] + registers[rm];
+            }
+            else if(opcode == "SUBS"){
+                registers[rd] = registers[rn] - registers[rm];
+            }
+            else if(opcode == "ANDS"){
+                registers[rd] = registers[rn] & registers[rm];
+            }
+            else if(opcode == "ORR"){
+                registers[rd] = registers[rn] | registers[rm];
+            }
         }
         else{
             std::cout << "not supported!" << std::endl;
@@ -110,6 +126,11 @@ void executeInstruction(std::string opcode, int rd, int rn, int rm, std::string 
     else{
 
     }
+}
+
+uint32_t parseImmediate(std::string line){
+    std::string value = line.substr(1);
+
 }
 
 void updateFlags(){

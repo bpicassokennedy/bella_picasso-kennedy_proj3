@@ -1,4 +1,13 @@
-#include <iostream>
+// 
+//  Programmer: Bella Picasso-Kennedy 
+//  Date Completed: November 29, 2024
+//  Version: 1.0 (CS219 Project 3)
+//  Brief Program Description: This project is an assemly language instruction simulator that reads and executes a sequence of instructions from an input file (programming-project-3.txt, coded in readData function), while 
+//                             updating the registers and flags. It emulates basic arithmetic, logical, and shift operations on a set of registers. Again, managing the condition flags based on the results of these operations (and whether 
+//                             or not the suffix -s is present in the opcode instruction).
+//
+
+#include <iostream> //input + output stream library 
 #include <string> // defintion for the string class 
 #include <fstream> // reading input from the txt file
 #include <cstdint> // provides fixed width integer types (ex. 32-bit unsigned integer)
@@ -8,11 +17,12 @@ struct Flags{ // update flags
     bool N, Z, C, V; // negative, zero, carry, overflow 
 };
 
+//function declarations (prototypes)
 int readData(std::string arr[], int numInstructions);
 void display(std::string instructions[], uint32_t registers[], int numInstructions, Flags& flags);
 void parseInstruction(std::string instruction, uint32_t registers[], std::string instructions[], Flags& flags);
 void executeInstruction(std::string opcode, int rd, int rn, int rm, std::string immediateStr, uint32_t registers[], std::string instructions[], bool updateFlags, Flags& flags);
-uint32_t parseImmediate(std::string line);
+uint32_t parseImmediate(std::string line); // NOTE: c++ compiler processes the code from top to bottom, so when a function is called in main it needs to know the functions signature (return type, parameters, + name) 
 
 int main(){
     static const int maxCount = 50;
@@ -30,6 +40,7 @@ int main(){
     return 0; // code executed successfully! 
 }
 
+//function defintions 
 int readData(std::string arr[], int max){ // want to modify the array so not passing through const
     std::ifstream inFile("programming-project-3.txt");
     if(!inFile){

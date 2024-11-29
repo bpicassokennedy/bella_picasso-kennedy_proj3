@@ -9,6 +9,7 @@
 
 #include <iostream> //input + output stream library 
 #include <string> // defintion for the string class 
+#include <sstream> // provides string classes like stringstream
 #include <fstream> // reading input from the txt file
 #include <cstdint> // provides fixed width integer types (ex. 32-bit unsigned integer)
 #include <iomanip> // input + output manipulator, control hexademical formatting 

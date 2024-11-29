@@ -178,9 +178,9 @@ void executeInstruction(std::string opcode, int rd, int rn, int rm, std::string 
 
 uint32_t parseImmediate(std::string line){
     std::string temp = line.substr(3); // ensuring we aren't casting #0x into the hex number 
-    std::stringstream ss;
+    std::stringstream ss; // creates an empty string stream
     uint32_t hexValue;
-    ss << std::hex << temp;
-    ss >> hexValue;
+    ss << std::hex << temp; // additing data to the stream
+    ss >> hexValue; // reading data from the stream
     return hexValue;
 }

@@ -13,7 +13,7 @@
 #include <cstdint> // provides fixed width integer types (ex. 32-bit unsigned integer)
 #include <iomanip> // input + output manipulator, control hexademical formatting 
 
-struct Flags{ // update flags
+struct Flags{ // struct for the condition flags used in function prototypes, needs to be defined prior 
     bool N, Z, C, V; // negative, zero, carry, overflow 
 };
 
@@ -51,7 +51,7 @@ int readData(std::string arr[], int max){ // want to modify the array so not pas
     while(inFile.good() && count < max){ 
         getline(inFile, instruction);
         arr[count] = instruction;
-        count++;
+        count++; 
     }
     inFile.close();
     return count;
@@ -60,7 +60,7 @@ int readData(std::string arr[], int max){ // want to modify the array so not pas
 void display(std::string instructions[], uint32_t registers[], int numInstructions, Flags& flags){
     for(int i = 0; i < numInstructions; i++){
         std::cout << instructions[i] << std::endl;
-        parseInstruction(instructions[i], registers, instructions, flags);  
+        parseInstruction(instructions[i], registers, instructions, flags); // hex and uppercase for correct formatting 
         std::cout << "R0: 0x" << std::hex << std::uppercase << registers[0] << " R1: 0x" << std::hex << std::uppercase << registers[1] << " R2: 0x" << std::hex << std::uppercase << registers[2] << " R3: 0x" << std::hex << std::uppercase << registers[3] << std::endl;
         std::cout << "R4: 0x" << std::hex << std::uppercase << registers[4] << " R5: 0x" << std::hex << std::uppercase << registers[5] << " R6: 0x" << std::hex << std::uppercase << registers[6] << " R7: 0x" << std::hex << std::uppercase << registers[7] << std::endl;
         std::cout << "N: " << flags.N << " Z: " << flags.Z << " C: " << flags.C << " V: " << flags.V << std::endl << std::endl; 
@@ -102,7 +102,7 @@ void parseInstruction(std::string instruction, uint32_t registers[], std::string
             updateFlags = true; 
         }
         char num1 = rd[1];
-        int rdNum = num1 - '0';
+        int rdNum = num1 - '0'; // converts char -> int 
         char num2 = rn[1];
         int rnNum = num2 - '0';
         char num3 = rm[1];
